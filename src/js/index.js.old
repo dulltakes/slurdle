@@ -1,0 +1,61 @@
+import data from '../assets/combined.min.json';
+
+const generateSlur = (obj) => {
+    const dataLength = obj.length
+    let randomTargets = []
+    while (randomTargets.length <= 4) {
+        randomTargets.push(obj[Math.floor(Math.random() * dataLength)])
+    }
+    return randomTargets
+}
+
+const generateQuestion = (slurs) => {
+    const question = slurs[0]["Term"]
+    const answer = slurs[0]["Targets"]
+    const origin = slurs[0]["Meaning, origin and notes"]
+    const randomTargets = slurs
+        .slice(1)
+        .map(item => item["Targets"])
+    // console.log(randomTargets)
+    return {question, answer, randomTargets, origin}
+}
+const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+const generateList = (question) => {
+    return shuffleArray([question.answer, ...question.randomTargets].map((item, index) =>
+        `<li class="targets${index === 0 ? " answer" : ""}">${item}</li>`)).join('\n')
+}
+
+const populateQuestion = () => {
+
+}
+const slurs = generateSlur(data)
+const question = generateQuestion(slurs)
+const questionTitle = document.querySelector("#question")
+const options = document.querySelector("#options")
+origin = question.origin
+questionTitle.innerHTML = `<p id="question-title">What group of people does this term target:</p><p id="question-term">${question.question}</p>`
+
+options.innerHTML = generateList(question)
+
+const targets = document.querySelectorAll('.targets')
+targets.forEach((item) => {
+    item.addEventListener("click", event => {
+        // event.target.id === "answer" ? alert("Well done!") : alert("Wrong answer 😔")
+        // alert(event.target.classList.contains('answer'))
+        if (event.target.classList.contains('answer')) {
+            event.target.classList.add("correct")
+
+        } else {
+            event.target.classList.add("false");
+            // alert("Wrong answer 😔")
+        }
+    })
+})
+
+
