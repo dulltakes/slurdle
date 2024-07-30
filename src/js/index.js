@@ -1,26 +1,24 @@
 import data from '../assets/combined.min.json';
 
-const getScreenWidth = () => {
-    return window.innerWidth;
-}
+const slurdleContainer = document.querySelector('#slurdle');
+const pageTitle = document.querySelector('#title');
+const main = document.querySelector('main');
+const nextButton = document.querySelector("#next");
+
+const getContainerWidth = () => {
+    console.log(slurdleContainer.clientHeight)
+    return slurdleContainer.offsetWidth;
+};
 
 const updateTitleFontSize = () => {
-    const pageTitle = document.querySelector('#title');
-    pageTitle.style.fontSize = `${getScreenWidth() / 4.5}px`;
-    const titleOffset = pageTitle.offsetHeight;
-    const main = document.querySelector('main');
-    main.offsetTop = "100px"
-    // console.log(titleOffset);
-}
+    const containerWidth = getContainerWidth();
+    pageTitle.style.fontSize = `${Math.round(containerWidth / 4.2)}px`;
+};
 
-// Initialize the font size
-updateTitleFontSize();
-
-// Update the font size on window resize
-window.onresize = () => {
+const handleResize = () => {
     updateTitleFontSize();
-}
-// Function to generate random slurs
+};
+
 const generateSlur = (obj, numTargets = 4) => {
     const dataLength = obj.length;
     const randomTargets = [];
@@ -34,7 +32,6 @@ const generateSlur = (obj, numTargets = 4) => {
     return randomTargets;
 };
 
-// Function to generate question details
 const generateQuestion = (slurs) => {
     const [firstSlur, ...remainingSlurs] = slurs;
     const { Term: question, Targets: answer, 'Meaning, origin and notes': origin } = firstSlur;
@@ -42,7 +39,6 @@ const generateQuestion = (slurs) => {
     return { question, answer, randomTargets, origin };
 };
 
-// Function to shuffle an array
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -51,7 +47,6 @@ const shuffleArray = (array) => {
     return array;
 };
 
-// Function to generate the list of answers
 const generateAnswerList = (question) => {
     const answerListItems = [question.answer, ...question.randomTargets].map((item, index) =>
         `<li class="targets${index === 0 ? " answer" : ""}">${item}</li>`
@@ -59,7 +54,6 @@ const generateAnswerList = (question) => {
     return shuffleArray(answerListItems).join('\n');
 };
 
-// Function to populate the question
 const populateQuestion = () => {
     const slurs = generateSlur(data);
     const question = generateQuestion(slurs);
@@ -68,9 +62,9 @@ const populateQuestion = () => {
     resetAnswerMessage();
     disableNextButton();
     attachEventListeners();
+    setTimeout(updateTitleFontSize, 0); // Ensure the font size is updated after DOM updates
 };
 
-// Function to update the question display
 const updateQuestionDisplay = (question) => {
     const questionTitle = document.querySelector("#question");
     questionTitle.innerHTML = `
@@ -79,32 +73,27 @@ const updateQuestionDisplay = (question) => {
     `;
 };
 
-// Function to update the answer list
 const updateAnswerList = (question) => {
     const options = document.querySelector("#options");
     options.innerHTML = generateAnswerList(question);
 };
 
-// Function to reset the answer message
 const resetAnswerMessage = () => {
     const answerMessage = document.querySelector(".answer-message");
     answerMessage.textContent = "";
     answerMessage.classList.remove("visible");
 };
 
-// Function to disable the next button
 const disableNextButton = () => {
     nextButton.disabled = true;
     nextButton.classList.add("disabled");
 };
 
-// Function to enable the next button
 const enableNextButton = () => {
     nextButton.disabled = false;
     nextButton.classList.remove("disabled");
 };
 
-// Function to attach event listeners to targets
 const attachEventListeners = () => {
     const targets = document.querySelectorAll('.targets');
     targets.forEach((item) => {
@@ -112,7 +101,6 @@ const attachEventListeners = () => {
     });
 };
 
-// Event handler for answer clicks
 const handleAnswerClick = (event) => {
     const answerMessage = document.querySelector(".answer-message");
     if (event.target.classList.contains('answer')) {
@@ -125,9 +113,12 @@ const handleAnswerClick = (event) => {
     }
 };
 
-// Event listener for the next button
-const nextButton = document.querySelector("#next");
 nextButton.addEventListener("click", populateQuestion);
 
-// Initialize the first question
-populateQuestion();
+window.addEventListener("resize", handleResize);
+
+// Ensure the initial title font size is set after the DOM is fully loaded
+window.addEventListener("DOMContentLoaded", () => {
+    populateQuestion();
+    updateTitleFontSize();
+});

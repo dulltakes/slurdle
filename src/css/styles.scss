@@ -9,21 +9,32 @@ $on-primary: #FFFFFF;
 $on-surface: #FFFFFF;
 $error-color: $red-500;
 
+$breakpoints: (
+        'small': 480px,
+        'medium': 768px,
+        'large': 1024px,
+        'xlarge': 1200px
+);
+
+@mixin respond-to($breakpoint) {
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    @content;
+  }
+}
+
 body {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   font-family: 'Roboto', sans-serif;
   height: 100vh;
   margin: 0;
   background-color: $background;
   color: $on-surface;
-  position: relative;
 }
 
 #title {
-  position: absolute;
-  top: 0;
-  width: 100%;
   line-height: 1;
   margin: 0;
   color: $brown-700;
@@ -46,14 +57,21 @@ main {
   text-align: center;
   background-color: $surface;
   padding: 24px;
-  margin-top: 20%;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+  @include respond-to('medium') {
+    padding: 32px;
+  }
+
+  @include respond-to('large') {
+    padding: 48px;
+  }
 }
 
 #slurdle {
   #question {
-    font-size: 24px;
+    font-size: 18px;
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
@@ -68,6 +86,10 @@ main {
       color: lighten($primary, 10%);
       margin-top: 0;
     }
+    @include respond-to('small') {
+      font-size: 24px;
+    }
+
   }
 
   #options {
@@ -86,7 +108,6 @@ main {
 
       &:hover {
         color: lighten($primary, 10%);
-        // background-color: darken($gray-200, 5%);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         transform: scale(1.01); // Use 1.01 instead of 101% for proper scaling
       }
@@ -107,6 +128,16 @@ main {
         &:hover {
           background-color: lighten($error-color, 10%);
         }
+      }
+
+      @include respond-to('medium') {
+        font-size: 20px;
+        padding: 16px;
+      }
+
+      @include respond-to('large') {
+        font-size: 22px;
+        padding: 20px;
       }
     }
   }
@@ -149,6 +180,16 @@ main {
     transition: none;
     cursor: not-allowed;
   }
+
+  @include respond-to('medium') {
+    padding: 16px 32px;
+    font-size: 18px;
+  }
+
+  @include respond-to('large') {
+    padding: 20px 40px;
+    font-size: 20px;
+  }
 }
 
 .answer-message {
@@ -159,5 +200,13 @@ main {
 
   &.visible {
     opacity: 1;
+  }
+
+  @include respond-to('medium') {
+    font-size: 1.5em;
+  }
+
+  @include respond-to('large') {
+    font-size: 1.75em;
   }
 }
