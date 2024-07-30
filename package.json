@@ -1,18 +1,21 @@
 {
   "name": "slurdle",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/index.js",
+  "description": "new take on wordle",
+  "source": "src/index.html",
   "type": "module",
   "scripts": {
-    "start": "parcel src/index.html",
-    "debug": "parcel src/index.html --no-cache --log-level verbose"
+    "start": "parcel",
+    "build": "rm -rf .parcel-cache dist/ && parcel build --public-url ./",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
-  "author": "",
+  "author": "@dulltakes",
   "license": "ISC",
   "devDependencies": {
     "@parcel/transformer-sass": "^2.12.0",
+    "gh-pages": "^6.1.1",
     "parcel": "^2.12.0"
   },
   "dependencies": {

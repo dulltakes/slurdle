@@ -5,6 +5,19 @@ const pageTitle = document.querySelector('#title');
 const main = document.querySelector('main');
 const nextButton = document.querySelector("#next");
 
+const mapObj1 = () => {
+    const re = /^(?=.*[A-Za-z].*[A-Za-z]).+$/
+    console.log(data.map((item) => item["Targets"].match(re)));
+    console.log(data.length)
+}
+const mapObj = () => {
+    const re = /^(?=.*[A-Za-z].*[A-Za-z]).+$/
+    const nonMatchingItems = data.filter(item => !re.test(item["Targets"]));
+    console.log(nonMatchingItems);
+    console.log(nonMatchingItems.length);
+};
+
+mapObj();
 const getContainerWidth = () => {
     console.log(slurdleContainer.clientHeight)
     return slurdleContainer.offsetWidth;
@@ -20,12 +33,13 @@ const handleResize = () => {
 };
 
 const generateSlur = (obj, numTargets = 4) => {
+    const re = new RegExp('^(?=.*[A-Za-z].*[A-Za-z]).+$')
     const dataLength = obj.length;
     const randomTargets = [];
     while (randomTargets.length <= numTargets) {
         const randomIndex = Math.floor(Math.random() * dataLength);
         const randomTarget = obj[randomIndex];
-        if (!randomTargets.includes(randomTarget)) {
+        if (!randomTargets.includes(randomTarget) && re.test(randomTarget["Targets"])) {
             randomTargets.push(randomTarget);
         }
     }
@@ -59,7 +73,7 @@ const populateQuestion = () => {
     const question = generateQuestion(slurs);
     updateQuestionDisplay(question);
     updateAnswerList(question);
-    resetAnswerMessage();
+    // resetAnswerMessage();
     disableNextButton();
     attachEventListeners();
     setTimeout(updateTitleFontSize, 0); // Ensure the font size is updated after DOM updates
@@ -105,8 +119,8 @@ const handleAnswerClick = (event) => {
     const answerMessage = document.querySelector(".answer-message");
     if (event.target.classList.contains('answer')) {
         event.target.classList.add("correct");
-        answerMessage.textContent = "Well done!";
-        answerMessage.classList.add("visible");
+        // answerMessage.textContent = "Well done!";
+        // answerMessage.classList.add("visible");
         enableNextButton();
     } else {
         event.target.classList.add("false");
