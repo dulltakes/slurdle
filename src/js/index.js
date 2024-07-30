@@ -1,5 +1,25 @@
 import data from '../assets/combined.min.json';
 
+const getScreenWidth = () => {
+    return window.innerWidth;
+}
+
+const updateTitleFontSize = () => {
+    const pageTitle = document.querySelector('#title');
+    pageTitle.style.fontSize = `${getScreenWidth() / 4.5}px`;
+    const titleOffset = pageTitle.offsetHeight;
+    const main = document.querySelector('main');
+    main.offsetTop = "100px"
+    // console.log(titleOffset);
+}
+
+// Initialize the font size
+updateTitleFontSize();
+
+// Update the font size on window resize
+window.onresize = () => {
+    updateTitleFontSize();
+}
 // Function to generate random slurs
 const generateSlur = (obj, numTargets = 4) => {
     const dataLength = obj.length;
