@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
   sessions.set(sessionId, {
     slursList,
     correctSlur,
-    correctIndex: slursList.findIndex(item => item.Term === correctSlur.Term)
+    correctIndex: slursList.findIndex(item => item.term === correctSlur.term)
   });
 
   res.render('index', {slursList, correctSlur, sessionId});
@@ -81,8 +81,8 @@ app.post('/check-answer', (req, res) => {
     sessions.delete(sessionId);
     res.json({
       correct: true,
-      term: session.correctSlur.Term.toLowerCase(),
-      targets: session.correctSlur.Targets,
+      term: session.correctSlur.term.toLowerCase(),
+      targets: session.correctSlur.targets,
       redirect: true // Signal client to reload for new quiz
     });
   } else {

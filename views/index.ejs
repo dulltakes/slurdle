@@ -9,7 +9,7 @@
 <h1>SLURDLE</h1>
 
 <% if (slursList.length > 0) { %>
-    <b>Which group does <strong id="correct-term"><%= correctSlur.Term.toLowerCase() %></strong> target?</b>
+    <b>Which group does <strong id="correct-term"><%= correctSlur.term.toLowerCase() %></strong> target?</b>
     <form id="slur-form" method="POST" action="/check-answer">
         <input type="hidden" name="sessionId" value="<%= sessionId %>">
         <ul id="slur-list">
@@ -17,7 +17,7 @@
                 <li>
                     <label>
                         <input type="radio" name="selectedIndex" value="<%= index %>">
-                        <%= item.Targets %>
+                        <%= item.targets %>
                     </label>
                 </li>
             <% }) %>
