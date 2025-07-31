@@ -83,6 +83,7 @@ app.post('/check-answer', (req, res) => {
       correct: true,
       term: session.correctSlur.term.toLowerCase(),
       targets: session.correctSlur.targets,
+      meaning: session.correctSlur.meaning,
       redirect: true // Signal client to reload for new quiz
     });
   } else {

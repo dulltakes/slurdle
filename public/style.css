@@ -104,10 +104,10 @@ button[type="submit"]:hover {
     margin: 0;
 }
 
-#try-again {
+#try-again, .error {
     color: #E0656F;
 }
 
-#well-done {
+.well-done {
     color: #51ba53;
 }

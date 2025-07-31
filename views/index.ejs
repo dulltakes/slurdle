@@ -68,7 +68,10 @@
 
             const resultDiv = document.getElementById('result');
             if (result.correct) {
-                resultDiv.innerHTML = `<p id="well-done">Well done! ${result.term} targets ${result.targets}</p>`;
+                resultDiv.innerHTML = `
+<p class="well-done">Well done! ${result.term} targets ${result.targets}</p>
+<br>
+<p class="well-done" id="info">${result.meaning}</p>`;
                 // Redirect to new quiz after correct answer
                 if (result.redirect) {
                     setTimeout(() => {
@@ -85,7 +88,7 @@
             }
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            document.getElementById('result').innerHTML = `<p class="error">Error: ${error.message}</p>`;
         }
     });
 </script>
