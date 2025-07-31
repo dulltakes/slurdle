@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SLURDLE</title>
+    <title>Random Mock Users</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<h1>SLURDLE</h1>
+<h1>Randomly Selected Slurs</h1>
 
 <% if (slursList.length > 0) { %>
-    <b>Which group does <strong id="correct-term"><%= correctSlur.term.toLowerCase() %></strong> target?</b>
-    <form id="slur-form" method="POST" action="/check-answer">
+    <b class="prompt">
+        Which group does <em id="correct-term"><%= correctSlur.term.toLowerCase() %></em> target?
+    </b>
+    <form id="slur-form" method="POST" action="/check-answer" class="form-container">
         <input type="hidden" name="sessionId" value="<%= sessionId %>">
         <ul id="slur-list">
             <% slursList.forEach((item, index) => { %>
@@ -22,7 +24,7 @@
                 </li>
             <% }) %>
         </ul>
-        <button type="submit">Submit Answer</button>
+        <button type="submit" class="submit-button">Submit Answer</button>
     </form>
 
     <div id="result"></div>
@@ -35,8 +37,6 @@
         e.preventDefault();
 
         const formData = new FormData(e.target);
-
-        // Convert FormData to URLSearchParams for proper parsing
         const params = new URLSearchParams();
         for (const [key, value] of formData.entries()) {
             params.append(key, value);
@@ -45,46 +45,36 @@
         try {
             const response = await fetch('/check-answer', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: params
             });
 
-            console.log('Response status:', response.status);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 const text = await response.text();
-                console.log('Non-JSON response:', text);
                 throw new Error('Server returned non-JSON response');
             }
 
             const result = await response.json();
-
             const resultDiv = document.getElementById('result');
+
             if (result.correct) {
-                resultDiv.innerHTML = `
-<p class="well-done">Well done! ${result.term} targets ${result.targets}</p>
-<br>
-<p class="well-done" id="info">${result.meaning}</p>`;
-                // Redirect to new quiz after correct answer
-                if (result.redirect) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                }
+                const formContainer = document.getElementById('slur-form');
+                formContainer.innerHTML = `
+                    <div class="correct-message">
+                        <h3 class="correct-title">Correct!</h3>
+                        <p><strong>${result.term}</strong> targets <strong>${result.targets}</strong></p>
+                        <p><strong>Meaning:</strong> ${result.meaning == null ? "Your guess is as good as ours" : result.meaning}</p>
+                        <button class="next-question-button" onclick="window.location.href='/'">Next Question</button>
+                    </div>
+                `;
+                resultDiv.innerHTML = '';
             } else {
                 resultDiv.innerHTML = `<p id="try-again">Try again!</p>`;
-                // Clear the selection so user can try again
                 const checkedInput = document.querySelector('input[name="selectedIndex"]:checked');
-                if (checkedInput) {
-                    checkedInput.checked = false;
-                }
+                if (checkedInput) checkedInput.checked = false;
             }
         } catch (error) {
             console.error('Error:', error);
