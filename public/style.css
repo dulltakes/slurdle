@@ -1,3 +1,113 @@
+/* Global Styles */
 body {
-    font-family: Helvetica, sans-serif;
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #EAEBD8;
+    color: #34323D;
+    margin: 0;
+    padding: 2rem;
+    max-width: 700px;
+    margin-inline: auto;
+}
+
+/* Heading */
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #34323D;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+}
+
+/* Prompt */
+b {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #6C504C;
+}
+
+strong#correct-term {
+    /*font-style: italic;*/
+    background-color: #E6A79B;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    color: #34323D;
+}
+
+/* Form container */
+form {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(52, 50, 61, 0.1);
+}
+
+/* List of options */
+#slur-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+#slur-list li {
+    margin-bottom: 0.75rem;
+}
+
+label {
+    font-size: 1rem;
+    color: #6C504C;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: 0.1s ease;
+    border-radius: 3px;
+    padding: 0.4rem 0.6rem;
+}
+
+label:hover {
+    background-color: #EAEBD8;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+/* Radio buttons */
+input[type="radio"] {
+    margin-right: 0.5rem;
+    accent-color: #E0656F;
+}
+
+/* Button */
+button[type="submit"] {
+    background-color: #E0656F;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #d3525d;
+}
+
+/* Result messages */
+#result {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+#result p {
+    margin: 0;
+}
+
+#try-again {
+    color: #E0656F;
+}
+
+#well-done {
+    color: #51ba53;
 }

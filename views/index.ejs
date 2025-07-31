@@ -2,40 +2,91 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Random Mock Users</title>
+    <title>SLURDLE</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<h1>Randomly Selected Slurs</h1>
+<h1>SLURDLE</h1>
 
 <% if (slursList.length > 0) { %>
-    <b>Which group does <em id="correct-term"><%= correctSlur.Term.toLowerCase() %></em> target?</b>
-    <ul id="slur-list">
-        <% slursList.forEach(item => { %>
-            <li data-term="<%= item.Term.toLowerCase() %>"><%= item.Targets %></li>
-        <% }) %>
-    </ul>
+    <b>Which group does <strong id="correct-term"><%= correctSlur.Term.toLowerCase() %></strong> target?</b>
+    <form id="slur-form" method="POST" action="/check-answer">
+        <input type="hidden" name="sessionId" value="<%= sessionId %>">
+        <ul id="slur-list">
+            <% slursList.forEach((item, index) => { %>
+                <li>
+                    <label>
+                        <input type="radio" name="selectedIndex" value="<%= index %>">
+                        <%= item.Targets %>
+                    </label>
+                </li>
+            <% }) %>
+        </ul>
+        <button type="submit">Submit Answer</button>
+    </form>
+
+    <div id="result"></div>
 <% } else { %>
     <p>No slurs found.</p>
 <% } %>
 
 <script>
-    const correctTerm = document.getElementById('correct-term').textContent;
+    document.getElementById('slur-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    document.querySelectorAll('#slur-list li').forEach(item => {
-        item.addEventListener('click', () => {
-            const clickedTerm = item.getAttribute('data-term');
+        const formData = new FormData(e.target);
 
-            if (clickedTerm === correctTerm) {
-                console.log('Well done!');
-                console.log({
-                    term: clickedTerm,
-                    targets: item.textContent
-                });
-            } else {
-                console.log('Try again!');
+        // Convert FormData to URLSearchParams for proper parsing
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
+        try {
+            const response = await fetch('/check-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            });
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.log('Non-JSON response:', text);
+                throw new Error('Server returned non-JSON response');
+            }
+
+            const result = await response.json();
+
+            const resultDiv = document.getElementById('result');
+            if (result.correct) {
+                resultDiv.innerHTML = `<p id="well-done">Well done! ${result.term} targets ${result.targets}</p>`;
+                // Redirect to new quiz after correct answer
+                if (result.redirect) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }
+            } else {
+                resultDiv.innerHTML = `<p id="try-again">Try again!</p>`;
+                // Clear the selection so user can try again
+                const checkedInput = document.querySelector('input[name="selectedIndex"]:checked');
+                if (checkedInput) {
+                    checkedInput.checked = false;
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        }
     });
 </script>
 </body>
