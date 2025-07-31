@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Random Mock Users</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<h1>Randomly Selected Users</h1>
+
+<% if (users.length > 0) { %>
+    <b>Which user has the id of: <em id="correct-id"><%= correctUser.id %></em></b>
+    <ul id="user-list">
+        <% users.forEach(user => { %>
+            <li data-id="<%= user.id %>"><%= user.name %></li>
+        <% }) %>
+    </ul>
+<% } else { %>
+    <p>No users found.</p>
+<% } %>
+
+<script>
+    const correctId = document.getElementById('correct-id').textContent;
+
+    const listItems = document.querySelectorAll('#user-list li');
+    listItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const clickedId = item.getAttribute('data-id');
+            if (clickedId === correctId) {
+                console.log('Well done!');
+                console.log({
+                    id: clickedId,
+                    name: item.textContent
+                });
+            } else {
+                console.log('Try again!');
+            }
+        });
+    });
+</script>
+</body>
+</html>
