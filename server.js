@@ -2,17 +2,18 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+const compression = require('compression');
+app.use(compression());
+
 const slurs = require('./ethnic_and_religious_slurs.min.json');
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.json()); // Add JSON parsing
+app.use(express.json());
 
-// Add this line if you have static files
 app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 
-// Store active sessions (in production, use Redis or database)
 const sessions = new Map();
 
 function getRandomSlurs(slurs, count = 5) {
@@ -39,11 +40,8 @@ app.get('/', (req, res) => {
   const correctSlur = slursList[Math.floor(Math.random() * slursList.length)];
   const sessionId = generateSessionId();
 
-  // Store the session data on the server
   sessions.set(sessionId, {
-    slursList,
-    correctSlur,
-    correctIndex: slursList.findIndex(item => item.term === correctSlur.term)
+    slursList, correctSlur, correctIndex: slursList.findIndex(item => item.term === correctSlur.term)
   });
 
   res.render('index', {slursList, correctSlur, sessionId});
@@ -55,20 +53,20 @@ app.post('/check-answer', (req, res) => {
 
   if (!req.body) {
     console.log('req.body is undefined');
-    return res.status(400).json({ error: 'Request body is missing' });
+    return res.status(400).json({error: 'Request body is missing'});
   }
 
-  const { sessionId, selectedIndex } = req.body;
+  const {sessionId, selectedIndex} = req.body;
 
   if (!sessionId || selectedIndex === undefined) {
     console.log('Missing sessionId or selectedIndex');
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({error: 'Missing required fields'});
   }
 
   const session = sessions.get(sessionId);
   if (!session) {
     console.log('Session not found:', sessionId);
-    return res.status(400).json({ error: 'Invalid session' });
+    return res.status(400).json({error: 'Invalid session'});
   }
 
   const selectedIndexNum = parseInt(selectedIndex);
@@ -84,10 +82,9 @@ app.post('/check-answer', (req, res) => {
       term: session.correctSlur.term.toLowerCase(),
       targets: session.correctSlur.targets,
       meaning: session.correctSlur.meaning,
-      redirect: true // Signal client to reload for new quiz
+      redirect: true
     });
   } else {
-    // Keep session for retry
     res.json({
       correct: false
     });
