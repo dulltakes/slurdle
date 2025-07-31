@@ -2,20 +2,22 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-const mock = require('./mock_api.json');
-app.use(express.urlencoded({ extended: true }));
-app.set('view engine', 'ejs');
-// app.use(express.static('public'));
+const slurs = require('./ethnic_and_religious_slurs.min.json');
 
-function getRandomUsers(mockData, count = 5) {
+app.use(express.urlencoded({extended: true}));
+
+app.set('view engine', 'ejs');
+
+
+function getRandomSlurs(slurs, count = 5) {
   const selected = new Set();
   const result = [];
 
-  while (result.length < count && selected.size < mockData.length) {
-    const randomIndex = Math.floor(Math.random() * mockData.length);
+  while (result.length < count && selected.size < slurs.length) {
+    const randomIndex = Math.floor(Math.random() * slurs.length);
     if (!selected.has(randomIndex)) {
       selected.add(randomIndex);
-      result.push(mockData[randomIndex]);
+      result.push(slurs[randomIndex]);
     }
   }
 
@@ -23,14 +25,10 @@ function getRandomUsers(mockData, count = 5) {
 }
 
 app.get('/', (req, res) => {
-  const users = getRandomUsers(mock, 5);
-  const correctUser = users[Math.floor(Math.random() * users.length)];
-  res.render('index', { users, correctUser });
-});
 
-app.get('/test', (req, res) => {
-  const users = getRandomUsers(mock, 5);
-  res.render('page');
+  const slursList = getRandomSlurs(slurs, 5);
+  const correctSlur = slursList[Math.floor(Math.random() * slursList.length)];
+  res.render('index', {slursList, correctSlur});
 });
 
 app.post('/form-endpoint', (req, res) => {
@@ -49,7 +47,7 @@ app.get('/mock/:id', (req, res) => {
   if (mock_user) {
     res.json(mock_user);
   } else {
-    res.status(404).json({ error: 'Mock user not found' });
+    res.status(404).json({error: 'Mock user not found'});
   }
 });
 
